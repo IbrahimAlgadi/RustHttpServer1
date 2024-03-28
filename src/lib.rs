@@ -60,9 +60,17 @@ struct Worker {
 impl Worker {
     fn new(id: usize, reciver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
         let thread = thread::spawn(move || loop {
-            let job = reciver.lock().unwrap().recv().unwrap();
-            println!("Worker {id} got a job; executing..");
-            job();
+            let message = reciver.lock().unwrap().recv();
+            match message {
+                Ok(job) => {
+                    println!("Worker {id} got a job; executing..");
+                    job();
+                },
+                Err(_) => {
+                    println!("Worker {id} disconnected; shutting down");
+                    break;
+                }
+            }
             // reciver;
         });
         Worker {
