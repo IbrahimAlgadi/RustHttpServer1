@@ -5,17 +5,20 @@ use std::{
     thread,
     time::Duration
 };
+use sim_http_server::ThreadPool;
+
 
 fn main() {
     let host = "127.0.0.1";
     let port = "7878";
     let listener = TcpListener::bind(format!("{host}:{port}")).unwrap();
+    let pool = ThreadPool::new(4);
     println!("Listening on: http://{host}:{port}");
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
-        
-        thread::spawn(|| {
+
+        pool.execute(|| {
             handle_connection(stream);
         });
     }

@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "l7_http_server"
+name = "sim_http_server"
 version = "0.1.0"
